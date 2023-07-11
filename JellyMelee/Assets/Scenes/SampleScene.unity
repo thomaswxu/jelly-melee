@@ -432,7 +432,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jellyRigidBody: {fileID: 579876289}
+  jellyBoxCollider: {fileID: 579876290}
   moveSpeed: 0
+  jumpSpeed: 0
+  maxJumpDuration_s: 0
+  fastfallSpeed: 0
+  hyperJumpMaxSpeed: 0
+  hyperJumpAcc: 0
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  moveRightKey: 275
+  moveLeftKey: 276
+  jumpKey: 273
+  fastfallKey: 274
+  hyperJumpKey: 32
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -526,7 +540,7 @@ GameObject:
   - component: {fileID: 1865609542}
   - component: {fileID: 1865609541}
   - component: {fileID: 1865609540}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -9,11 +9,13 @@ public class JellyScript : MonoBehaviour
   public BoxCollider2D jellyBoxCollider;
   public float moveSpeed;
   public float jumpSpeed;
+  public float maxJumpDuration_s;
+  private float jumpTime;
   public float fastfallSpeed;
   public float hyperJumpMaxSpeed;
   public float hyperJumpAcc;
 
-  public LayerMask jumpableGround;
+  public LayerMask groundLayer;
 
   // Controls
   public KeyCode moveRightKey = KeyCode.RightArrow;
@@ -26,7 +28,8 @@ public class JellyScript : MonoBehaviour
   void Start()
   {
     moveSpeed = 40.0f;
-    jumpSpeed = 70.0f;
+    jumpSpeed = 50.0f;
+    maxJumpDuration_s = 0.3f;
     fastfallSpeed = 30.0f;
     hyperJumpMaxSpeed = 100.0f;
     hyperJumpAcc = 20.0f;
@@ -35,7 +38,7 @@ public class JellyScript : MonoBehaviour
   private bool IsGrounded()
   {
     return Physics2D.BoxCast(
-      jellyBoxCollider.bounds.center, jellyBoxCollider.bounds.size, 0f, Vector2.down, 0.1f, jumpableGround);
+      jellyBoxCollider.bounds.center, jellyBoxCollider.bounds.size, 0f, Vector2.down, 1.0f, groundLayer);
   }
 
   // Update is called once per frame
@@ -48,7 +51,12 @@ public class JellyScript : MonoBehaviour
     }
 
     if (Input.GetKeyDown(jumpKey) && IsGrounded()) {
-      jellyRigidBody.velocity += Vector2.up * jumpSpeed;
+      jumpTime = Time.time;
+      Debug.Log("jumpTime: " + jumpTime);
+    }
+    if (Input.GetKey(jumpKey) && Time.time < jumpTime + maxJumpDuration_s) {
+      Debug.Log("Time: " + Time.time);
+      jellyRigidBody.velocity = Vector2.up * jumpSpeed;
     }
 
     if (Input.GetKey(fastfallKey)) {
