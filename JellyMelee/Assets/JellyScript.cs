@@ -22,6 +22,8 @@ public class JellyScript : MonoBehaviour
   private float hyperJumpTime;
   private bool hyperJumping;
 
+  public float minY = -31.29f;
+
   // Controls
   public KeyCode moveRightKey = KeyCode.RightArrow;
   public KeyCode moveLeftKey = KeyCode.LeftArrow;
@@ -91,6 +93,11 @@ public class JellyScript : MonoBehaviour
 
         hyperJumping = false;
       }
+    }
+
+    // Prevent clipping
+    if (jellyRigidBody.position.y < minY) {
+      jellyRigidBody.position = new (jellyRigidBody.position.x, minY);
     }
   }
 }
