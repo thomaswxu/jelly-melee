@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,8 +17,8 @@ public class JellyScript : MonoBehaviour
   private float jumpTime;
   public float fastfallSpeed;
 
-  public float hyperJumpMaxSpeed;
   public float hyperJumpAcc;
+  public float hyperJumpMaxSpeed;
   private float hyperJumpTime;
   private bool hyperJumping;
 
@@ -35,8 +36,8 @@ public class JellyScript : MonoBehaviour
     jumpSpeed = 50.0f;
     maxJumpDuration_s = 0.3f;
     fastfallSpeed = 30.0f;
-    hyperJumpMaxSpeed = 100.0f;
-    hyperJumpAcc = 20.0f;
+    hyperJumpMaxSpeed = 500.0f;
+    hyperJumpAcc = 300.0f;
   }
 
   private bool IsGrounded()
@@ -78,12 +79,16 @@ public class JellyScript : MonoBehaviour
     // Hyper jumping
     if (IsGrounded()) {
       if (Input.GetKeyDown(hyperJumpKey)) {
+        Debug.Log("Hyper jump key pressed");
         hyperJumpTime = Time.time;
         hyperJumping = true;
-        Debug.Log("Hyper jump key pressed");
       }
       if (Input.GetKeyUp(hyperJumpKey) && hyperJumping) {
-        Debug.Log("Hyper Jump key released");
+        Debug.Log("Hyper Jump key released, total time (s): " + (Time.time - hyperJumpTime));
+        float hyperJumpSpeed = Math.Min(hyperJumpAcc * (Time.time - hyperJumpTime), hyperJumpMaxSpeed);
+        Debug.Log("Hyper Jump speed: " + hyperJumpSpeed);
+        jellyRigidBody.velocity = Vector2.up * hyperJumpSpeed;
+
         hyperJumping = false;
       }
     }
