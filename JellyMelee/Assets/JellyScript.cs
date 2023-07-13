@@ -7,15 +7,19 @@ public class JellyScript : MonoBehaviour
   // Params
   public Rigidbody2D jellyRigidBody;
   public BoxCollider2D jellyBoxCollider;
+  public LayerMask groundLayer;
+
   public float moveSpeed;
+  
   public float jumpSpeed;
   public float maxJumpDuration_s;
   private float jumpTime;
   public float fastfallSpeed;
+
   public float hyperJumpMaxSpeed;
   public float hyperJumpAcc;
-
-  public LayerMask groundLayer;
+  private float hyperJumpTime;
+  private bool hyperJumping;
 
   // Controls
   public KeyCode moveRightKey = KeyCode.RightArrow;
@@ -27,7 +31,7 @@ public class JellyScript : MonoBehaviour
   // Start is called before the first frame update
   void Start()
   {
-    moveSpeed = 40.0f;
+    moveSpeed = 50.0f;
     jumpSpeed = 50.0f;
     maxJumpDuration_s = 0.3f;
     fastfallSpeed = 30.0f;
@@ -44,27 +48,44 @@ public class JellyScript : MonoBehaviour
   // Update is called once per frame
   void Update()
   {
-    if (Input.GetKey(moveRightKey)) {
-      transform.position += Vector3.right * moveSpeed * Time.deltaTime;
-    } else if (Input.GetKey(moveLeftKey)) {
-      transform.position += Vector3.left * moveSpeed * Time.deltaTime;
+    // Left/Right movement
+    if (!hyperJumping) {
+      if (Input.GetKey(moveRightKey)) {
+        transform.position += Vector3.right * moveSpeed * Time.deltaTime;
+      } else if (Input.GetKey(moveLeftKey)) {
+        transform.position += Vector3.left * moveSpeed * Time.deltaTime;
+      }
+    }
+    // Air movement
+    if (!IsGrounded()) {
+      if (Input.GetKey(fastfallKey)) {
+        jellyRigidBody.velocity += Vector2.down * fastfallSpeed;
+      }
     }
 
-    if (Input.GetKeyDown(jumpKey) && IsGrounded()) {
-      jumpTime = Time.time;
-      Debug.Log("jumpTime: " + jumpTime);
-    }
-    if (Input.GetKey(jumpKey) && Time.time < jumpTime + maxJumpDuration_s) {
-      Debug.Log("Time: " + Time.time);
-      jellyRigidBody.velocity = Vector2.up * jumpSpeed;
+    // Jumping
+    if (!hyperJumping) {
+      if (Input.GetKeyDown(jumpKey) && IsGrounded()) {
+        jumpTime = Time.time;
+        // Debug.Log("jumpTime: " + jumpTime);
+      }
+      if (Input.GetKey(jumpKey) && Time.time < jumpTime + maxJumpDuration_s) {
+        // Debug.Log("Time: " + Time.time);
+        jellyRigidBody.velocity = Vector2.up * jumpSpeed;
+      }
     }
 
-    if (Input.GetKey(fastfallKey)) {
-      jellyRigidBody.velocity += Vector2.down * fastfallSpeed;
+    // Hyper jumping
+    if (IsGrounded()) {
+      if (Input.GetKeyDown(hyperJumpKey)) {
+        hyperJumpTime = Time.time;
+        hyperJumping = true;
+        Debug.Log("Hyper jump key pressed");
+      }
+      if (Input.GetKeyUp(hyperJumpKey) && hyperJumping) {
+        Debug.Log("Hyper Jump key released");
+        hyperJumping = false;
+      }
     }
-
-    // if (Input.GetKey(hyperJumpKey)) {
-
-    // }
   }
 }
